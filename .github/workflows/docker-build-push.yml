@@ -36,7 +36,21 @@ jobs:
             ${{ env.DOCKER_USER }}/lms-frontend:latest
             ${{ env.DOCKER_USER }}/lms-frontend:${{ github.sha }}
 
-      # Step 4️⃣ - Build & Push Backend (Spring Boot)
+      # Step 4️⃣ - Cache Maven Dependencies (optional but recommended)
+      - name: ⚡ Cache Maven Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # Step 5️⃣ - Build JAR File using Maven
+      - name: 🧩 Build Backend JAR File
+        working-directory: ./backend/lms-springboot
+        run: mvn clean package -DskipTests
+
+      # Step 6️⃣ - Build & Push Backend (Spring Boot)
       - name: 🏗️ Build and Push Backend Image
         uses: docker/build-push-action@v4
         with:
