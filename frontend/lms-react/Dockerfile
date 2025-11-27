@@ -1,4 +1,4 @@
-# Stage 1: Build the React app
+# Stage 1: Build React app
 FROM node:18 AS build
 WORKDIR /app
 COPY package*.json ./
