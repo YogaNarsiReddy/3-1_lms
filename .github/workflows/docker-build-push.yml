@@ -36,7 +36,7 @@ jobs:
             ${{ env.DOCKER_USER }}/lms-frontend:latest
             ${{ env.DOCKER_USER }}/lms-frontend:${{ github.sha }}
 
-      # Step 4️⃣ - Cache Maven Dependencies (optional but recommended)
+      # Step 4️⃣ - Cache Maven Dependencies
       - name: ⚡ Cache Maven Dependencies
         uses: actions/cache@v3
         with:
@@ -45,12 +45,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # Step 5️⃣ - Build JAR File using Maven
+      # Step 5️⃣ - Setup JDK 21 for Maven
+      - name: ☕ Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # Step 6️⃣ - Build JAR File using Maven
       - name: 🧩 Build Backend JAR File
         working-directory: ./backend/lms-springboot
         run: mvn clean package -DskipTests
 
-      # Step 6️⃣ - Build & Push Backend (Spring Boot)
+      # Step 7️⃣ - Build & Push Backend (Spring Boot)
       - name: 🏗️ Build and Push Backend Image
         uses: docker/build-push-action@v4
         with:
