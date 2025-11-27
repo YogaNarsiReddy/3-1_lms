@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lms-frontend
+  namespace: lms-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lms-frontend
+  template:
+    metadata:
+      labels:
+        app: lms-frontend
+    spec:
+      containers:
+        - name: lms-frontend
+          image: yoganarsireddy/lms-frontend:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: REACT_APP_API_BASE_URL
+              value: "http://192.168.49.2:30078"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "window.RUNTIME_API_URL='${REACT_APP_API_BASE_URL}'" > /usr/share/nginx/html/env-config.js;
+              exec nginx -g 'daemon off;'

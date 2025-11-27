@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lms-backend
+  namespace: lms-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lms-backend
+  template:
+    metadata:
+      labels:
+        app: lms-backend
+    spec:
+      containers:
+        - name: lms-backend
+          image: yoganarsireddy/lms-backend:latest
+          ports:
+            - containerPort: 8078
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://lms-mysql:3306/lms3-1
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: Yoga2005@1907

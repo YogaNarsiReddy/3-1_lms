@@ -52,7 +52,7 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # Step 6️⃣ - Build JAR File using Maven
+      # Step 6️⃣ - Build Backend JAR File using Maven
       - name: 🧩 Build Backend JAR File
         working-directory: ./backend/lms-springboot
         run: mvn clean package -DskipTests
@@ -67,3 +67,10 @@ jobs:
           tags: |
             ${{ env.DOCKER_USER }}/lms-backend:latest
             ${{ env.DOCKER_USER }}/lms-backend:${{ github.sha }}
+
+      # Step 8️⃣ - Verify Docker Images
+      - name: ✅ Verify Docker Images
+        run: |
+          docker pull ${{ env.DOCKER_USER }}/lms-frontend:latest
+          docker pull ${{ env.DOCKER_USER }}/lms-backend:latest
+          docker images | grep lms

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lms-mysql
+  namespace: lms-app
+spec:
+  selector:
+    matchLabels:
+      app: lms-mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: lms-mysql
+    spec:
+      containers:
+        - image: mysql:8.0
+          name: lms-mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: Yoga2005@1907
+            - name: MYSQL_DATABASE
+              value: lms3-1
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-persistent-storage
+          emptyDir: {}
