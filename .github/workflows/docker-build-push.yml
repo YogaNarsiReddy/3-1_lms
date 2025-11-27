@@ -11,43 +11,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1️⃣ - Checkout
+      # Step 1️⃣ - Checkout code
       - name: 🛎️ Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2️⃣ - Debug structure
-      - name: 🧭 Debug — Show Directory Tree
-        run: |
-          echo "=== CURRENT DIRECTORY ==="
-          pwd
-          echo "=== FILE TREE ==="
-          ls -R
-
-      # Step 3️⃣ - Login to Docker Hub
+      # Step 2️⃣ - Login to Docker Hub
       - name: 🔑 Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Step 4️⃣ - Build Frontend
-      - name: 🏗️ Build LMS Frontend Docker Image
-        working-directory: ./frontend/lms-react
-        run: |
-          echo "Building frontend image from $(pwd)"
-          docker buildx build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest . --load
+      # Step 3️⃣ - Build & Push Frontend (React)
+      - name: 🏗️ Build and Push Frontend Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend/lms-react
+          file: ./frontend/lms-react/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest
 
-      # Step 5️⃣ - Push Frontend
-      - name: 📤 Push LMS Frontend to Docker Hub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest
-
-      # Step 6️⃣ - Build Backend
-      - name: 🏗️ Build LMS Backend Docker Image
-        working-directory: ./backend/lms-springboot
-        run: |
-          echo "Building backend image from $(pwd)"
-          docker buildx build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest . --load
-
-      # Step 7️⃣ - Push Backend
-      - name: 📤 Push LMS Backend to Docker Hub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest
+      # Step 4️⃣ - Build & Push Backend (Spring Boot)
+      - name: 🏗️ Build and Push Backend Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend/lms-springboot
+          file: ./backend/lms-springboot/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest
