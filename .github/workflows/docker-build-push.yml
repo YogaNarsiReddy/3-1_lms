@@ -1,4 +1,4 @@
-name: Build and Push Frontend & Backend Images
+name: Build and Push LMS Frontend & Backend Images
 
 on:
   push:
@@ -20,20 +20,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Frontend
-      - name: 🏗️ Build Frontend Docker Image
+      # 🏗️ Build and Push LMS Frontend
+      - name: Build LMS Frontend Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mad-frontend:latest ./frontend
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest ./lms-frontend
 
-      - name: 📤 Push Frontend to Docker Hub
+      - name: Push LMS Frontend to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mad-frontend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest
 
-      # Backend
-      - name: 🏗️ Build Backend Docker Image
+      # 🏗️ Build and Push LMS Backend
+      - name: Build LMS Backend Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mad-backend:latest ./backend
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest ./lms-backend
 
-      - name: 📤 Push Backend to Docker Hub
+      - name: Push LMS Backend to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mad-backend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest
