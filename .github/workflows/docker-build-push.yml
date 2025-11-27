@@ -15,13 +15,17 @@ jobs:
       - name: 🛎️ Checkout Repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Debug the folder structure (helps confirm correct paths)
+      # 2️⃣ Debug – Show the repository structure
       - name: 🧭 Debug — Show Directory Tree
         run: |
           echo "=== CURRENT DIRECTORY ==="
           pwd
-          echo "=== FILES ==="
+          echo "=== FILE TREE ==="
           ls -R
+          echo "=== FRONTEND/lms-react Contents ==="
+          ls -la ./frontend/lms-react || echo "frontend/lms-react not found!"
+          echo "=== BACKEND/lms-springboot Contents ==="
+          ls -la ./backend/lms-springboot || echo "backend/lms-springboot not found!"
 
       # 3️⃣ Login to Docker Hub
       - name: 🔑 Login to Docker Hub
@@ -30,22 +34,46 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 4️⃣ Build and Push Frontend (React)
+      # 4️⃣ Build & Push Frontend (React)
       - name: 🏗️ Build LMS Frontend Docker Image
         run: |
           echo "Building frontend image..."
-          docker buildx build -f ./frontend/lms-react/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest ./frontend/lms-react --load
+          echo "Checking path ./frontend/lms-react/Dockerfile ..."
+          if [ -f "./frontend/lms-react/Dockerfile" ]; then
+            echo "Dockerfile found ✅"
+          else
+            echo "❌ ERROR: Dockerfile not found at ./frontend/lms-react/Dockerfile"
+            exit 1
+          fi
+
+          docker buildx build \
+            -f ./frontend/lms-react/Dockerfile \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest \
+            ./frontend/lms-react \
+            --load
 
       - name: 📤 Push LMS Frontend to Docker Hub
         run: |
           echo "Pushing frontend image..."
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest
 
-      # 5️⃣ Build and Push Backend (Spring Boot)
+      # 5️⃣ Build & Push Backend (Spring Boot)
       - name: 🏗️ Build LMS Backend Docker Image
         run: |
           echo "Building backend image..."
-          docker buildx build -f ./backend/lms-springboot/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest ./backend/lms-springboot --load
+          echo "Checking path ./backend/lms-springboot/Dockerfile ..."
+          if [ -f "./backend/lms-springboot/Dockerfile" ]; then
+            echo "Dockerfile found ✅"
+          else
+            echo "❌ ERROR: Dockerfile not found at ./backend/lms-springboot/Dockerfile"
+            exit 1
+          fi
+
+          docker buildx build \
+            -f ./backend/lms-springboot/Dockerfile \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest \
+            ./backend/lms-springboot \
+            --load
 
       - name: 📤 Push LMS Backend to Docker Hub
         run: |
