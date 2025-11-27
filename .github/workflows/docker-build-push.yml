@@ -11,33 +11,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Step: Checkout your repository
       - name: 🛎️ Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 🧭 List Project Structure (Debug)
+      # 2️⃣ Step: Debug your folder structure (add this step here)
+      - name: 🧭 Debug — Show Directory Tree
         run: |
-          echo "Repository structure:"
+          echo "=== CURRENT DIRECTORY ==="
+          pwd
+          echo "=== FILES ==="
           ls -R
 
+      # 3️⃣ Step: Login to Docker Hub
       - name: 🔑 Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 🏗️ Build and Push Frontend
+      # 4️⃣ Step: Build & Push Frontend
       - name: Build LMS Frontend Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest ./frontend/lms-react
+          echo "Building frontend image..."
+          docker build -f ./frontend/lms-react/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest ./frontend/lms-react
 
       - name: Push LMS Frontend to Docker Hub
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest
 
-      # 🏗️ Build and Push Backend
+      # 5️⃣ Step: Build & Push Backend
       - name: Build LMS Backend Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest ./backend/lms-springboot
+          echo "Building backend image..."
+          docker build -f ./backend/lms-springboot/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest ./backend/lms-springboot
 
       - name: Push LMS Backend to Docker Hub
         run: |
