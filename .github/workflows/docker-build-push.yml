@@ -16,7 +16,7 @@ jobs:
 
       - name: 🧭 List Project Structure (Debug)
         run: |
-          echo "Project structure:"
+          echo "Repository structure:"
           ls -R
 
       - name: 🔑 Login to Docker Hub
@@ -25,24 +25,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 🏗️ Build and Push LMS Frontend
+      # 🏗️ Build and Push Frontend
       - name: Build LMS Frontend Docker Image
         run: |
-          echo "Building frontend image..."
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest ./frontend
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest ./frontend/lms-react
 
       - name: Push LMS Frontend to Docker Hub
         run: |
-          echo "Pushing frontend image..."
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:latest
 
-      # 🏗️ Build and Push LMS Backend
+      # 🏗️ Build and Push Backend
       - name: Build LMS Backend Docker Image
         run: |
-          echo "Building backend image..."
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest ./backend
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest ./backend/lms-springboot
 
       - name: Push LMS Backend to Docker Hub
         run: |
-          echo "Pushing backend image..."
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend:latest
